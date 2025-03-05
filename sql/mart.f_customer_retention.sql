@@ -6,6 +6,7 @@ WITH customer_orders AS (
         MIN(date_id) AS first_order_date,
         DATE_PART('week', date_id) AS period_id
     FROM f_sales
+    WHERE date_id::Date = '{{ds}}'
     GROUP BY customer_id, DATEPART(WEEK, date_id)
 ),
 new_customers AS (
@@ -33,6 +34,7 @@ refunded_customers AS (
         COUNT(*) AS customers_refunded
     FROM f_sales
     WHERE payment_amount < 0  
+        AND date_id::Date = '{{ds}}'
     GROUP BY DATE_PART('week', date_id)
 )
 INSERT INTO mart.f_customer_retention (
